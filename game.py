@@ -1,3 +1,5 @@
+# https://www.codewars.com/kata/52423db9add6f6fc39000354/train/python
+# https://playgameoflife.com/
 # from preloaded import htmlize  # this can help you debug your code
 from itertools import product
 
