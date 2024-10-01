@@ -1,6 +1,5 @@
 # https://www.codewars.com/kata/52423db9add6f6fc39000354/train/python
 # https://playgameoflife.com/
-# from preloaded import htmlize  # this can help you debug your code
 from itertools import product
 
 
@@ -28,7 +27,7 @@ def get_generation(
 
                 # get list of xy combinations of neighbours, filter for coords
                 # that are in bounds and not the current element's coords
-                neighbours_cr_coords = list(filter(
+                neighbours_cr_coords = filter(
                     lambda cr: (
                         is_cell_in_range(cr[0], row)
                         and is_row_in_range(cr[1], cells)
@@ -38,13 +37,12 @@ def get_generation(
                         lambda cr: (cell_idx + cr[0], row_idx + cr[1]),
                         combis,
                     ),
-                ))
+                )
 
                 neighbours = []
 
                 for cr in neighbours_cr_coords:
                     c_idx, r_idx = cr
-                    # BUG: out of index (not sure which gen)
                     c = cells[r_idx][c_idx]
 
                     neighbours.append(c)
