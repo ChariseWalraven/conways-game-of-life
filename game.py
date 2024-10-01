@@ -67,11 +67,7 @@ def get_generation(
         # if first or last row or column is all 0's, remove
         while should_remove_edges(result):
             result = invert_cells(
-                remove_empty_edges(
-                    invert_cells(
-                        remove_empty_edges(result)
-                    )
-                )
+                remove_empty_edges(invert_cells(remove_empty_edges(result)))
             )
 
         cells = result
@@ -127,10 +123,12 @@ def remove_empty_edges(cells):
 
 def should_remove_edges(cells):
     inv_cells = invert_cells(cells)
+    # fmt: off
     return 1 not in cells[0] \
         or 1 not in cells[-1] \
         or 1 not in inv_cells[0] \
         or 1 not in inv_cells[-1]
+    # fmt: on
 
 
 tests = [
