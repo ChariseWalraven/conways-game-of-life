@@ -9,9 +9,8 @@ def get_generation(
     generations: int,
 ) -> list[list[int]]:
 
-    result = []
-    for _ in range(generations):
-        next_gen_cells = []
+    for i in range(generations):
+        result = []
         cells = pad_cells(cells)
 
         for row_idx, row in enumerate(cells):
@@ -29,7 +28,7 @@ def get_generation(
 
                 # get list of xy combinations of neighbours, filter for coords
                 # that are in bounds and not the current element's coords
-                neighbours_cr_coords = filter(
+                neighbours_cr_coords = list(filter(
                     lambda cr: (
                         is_cell_in_range(cr[0], row)
                         and is_row_in_range(cr[1], cells)
@@ -39,13 +38,13 @@ def get_generation(
                         lambda cr: (cell_idx + cr[0], row_idx + cr[1]),
                         combis,
                     ),
-                )
+                ))
 
                 neighbours = []
 
                 for cr in neighbours_cr_coords:
                     c_idx, r_idx = cr
-                    # BUG: out of index in test 2 (not sure which gen)
+                    # BUG: out of index (not sure which gen)
                     c = cells[r_idx][c_idx]
 
                     neighbours.append(c)
@@ -65,18 +64,21 @@ def get_generation(
                 cell = 1 if should_cell_survive or should_cell_revive else 0
 
                 next_gen_row.append(cell)
-            next_gen_cells.append(next_gen_row)
+            result.append(next_gen_row)
 
-            # remove empty rows and columns
+        # if first or last row or column is all 0's, remove
+        while should_remove_edges(result):
+            result = invert_cells(
+                remove_empty_edges(
+                    invert_cells(
+                        remove_empty_edges(result)
+                    )
+                )
+            )
 
-        next_gen_cells = [r for r in next_gen_cells if 1 in r]
-        inv_next_gen_cells = invert_cells(next_gen_cells)
-        next_gen_cells = [r for r in inv_next_gen_cells if 1 in r]
-        next_gen_cells = invert_cells(next_gen_cells)
+        cells = result
 
-        result = next_gen_cells
-
-    return result
+    return cells
 
 
 # invert cell rows and columns
@@ -116,6 +118,23 @@ def is_current_cell(xy, curr_cell_coords):
     return xy == curr_cell_coords
 
 
+def remove_empty_edges(cells):
+    if 1 not in cells[0]:
+        cells.pop(0)
+    if 1 not in cells[-1]:
+        cells.pop(-1)
+
+    return cells
+
+
+def should_remove_edges(cells):
+    inv_cells = invert_cells(cells)
+    return 1 not in cells[0] \
+        or 1 not in cells[-1] \
+        or 1 not in inv_cells[0] \
+        or 1 not in inv_cells[-1]
+
+
 tests = [
     [
         [1, 0, 0],
@@ -129,8 +148,7 @@ tests = [
     ],
 ]
 
-res = get_generation(tests[1], 16)
-
+res = get_generation(tests[0], 2)
 desired_res = [
     [
         [0, 1, 0],
