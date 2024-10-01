@@ -1,7 +1,5 @@
 # https://www.codewars.com/kata/52423db9add6f6fc39000354/train/python
 # https://playgameoflife.com/
-from itertools import product
-
 
 def get_generation(
     cells: list[list[int]],
@@ -16,14 +14,11 @@ def get_generation(
             next_gen_row = []
             for cell_idx, cell in enumerate(row):
 
-                # get all neighbours and put in a single list, then check the
-                # amount of live neighbours
-                # get positions of all neighbours
-                co_ord_shifter = range(-1, 2)  # returns a list with
-                # values to shift coordinates by
-
-                # get all combinations for both x and y shifts
-                combis = product(co_ord_shifter, co_ord_shifter)
+                combis = {
+                    (cell_idx + i, row_idx + j)
+                    for i in range(-1, 2)
+                    for j in range(-1, 2)
+                }
 
                 # get list of xy combinations of neighbours, filter for coords
                 # that are in bounds and not the current element's coords
@@ -33,10 +28,7 @@ def get_generation(
                         and is_row_in_range(cr[1], cells)
                         and not is_current_cell(cr, (cell_idx, row_idx))
                     ),
-                    map(
-                        lambda cr: (cell_idx + cr[0], row_idx + cr[1]),
-                        combis,
-                    ),
+                    combis
                 )
 
                 neighbours = []
@@ -144,7 +136,7 @@ tests = [
     ],
 ]
 
-res = get_generation(tests[0], 2)
+res = get_generation(tests[1], 16)
 desired_res = [
     [
         [0, 1, 0],
